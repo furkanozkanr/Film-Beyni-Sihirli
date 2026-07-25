@@ -1,67 +1,48 @@
-/* ==========================================================================
-   FILM BEYNİ — sw.js (Service Worker)
-   Uygulamayı önbelleğe alır ve yeni bir sürüm yayınlandığında (bu dosya veya
-   CACHE_VERSION değiştiğinde) sayfaya haber verir, böylece kullanıcıya
-   "yeni güncelleme var" bildirimi gösterilebilir.
+// Film Beyni — servis çalışanı
+// ÖNEMLİ: Önceki sürüm "cache-first" çalışıyordu — yani siz dosyaları
+// güncelleseniz bile telefon hep eski, önbelleklenmiş kopyayı gösteriyordu.
+// Şimdi "network-first" stratejisine geçiyoruz: her zaman önce internetten
+// en güncel dosyayı çekmeye çalışır, sadece çevrimdışıysanız (internet
+// yoksa) önbellekteki son bilinen kopyayı gösterir.
 
-   ÖNEMLİ: Her yeni yayında CACHE_VERSION değerini değiştirin (örn. "v3").
-   Aksi halde tarayıcı eski dosyaları önbellekten sunmaya devam edebilir.
-   ========================================================================== */
-const CACHE_VERSION = "v2";
-const CACHE_NAME = `filmbeyni-${CACHE_VERSION}`;
-
-const APP_SHELL = [
+const CACHE_NAME = "filmbeyni-v2"; // sürüm değişti -> eski önbellek tamamen temizlenecek
+const ASSETS = [
   "./",
   "./index.html",
   "./style.css",
   "./script.js",
   "./manifest.json",
-  "./favicon-32.png",
-  "./favicon-16.png",
-  "./apple-touch-icon.png",
   "./icon-192.png",
-  "./icon-512.png",
-  "./icon-1024.png",
+  "./icon-512.png"
 ];
 
-/* Kurulum: dosyaları önbelleğe al */
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .catch(() => {}) // eksik/erişilemeyen bir dosya tüm kurulumu bozmasın
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(() => {})
   );
-  // Not: skipWaiting burada ÇAĞRILMIYOR — kullanıcı "Yenile"ye basana kadar
-  // yeni sürüm bekletiliyor (SKIP_WAITING mesajıyla tetiklenir).
+  self.skipWaiting();
 });
 
-/* Etkinleştirme: eski sürüm önbelleklerini temizle */
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((k) => k.startsWith("filmbeyni-") && k !== CACHE_NAME)
-            .map((k) => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
   );
+  self.clients.claim();
 });
 
-/* İstekler: önce ağ, olmazsa önbellek (app shell dosyaları için) */
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
+  if(event.request.method !== "GET") return;
   event.respondWith(
     fetch(event.request)
-      .then((res) => {
-        const copy = res.clone();
+      .then((networkResponse) => {
+        // İnternetten başarıyla geldi -> önbelleği bu en güncel kopyayla tazele
+        const copy = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});
-        return res;
+        return networkResponse;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request)) // sadece çevrimdışıyken önbelleğe düş
   );
 });
 
-/* Sayfadan "hemen etkinleş" komutu gelirse yeni sürümü devreye al */
-self.addEventListener("message", (event) => {
-  if (event.data === "SKIP_WAITING") self.skipWaiting();
-});
