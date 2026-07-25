@@ -16,27 +16,30 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Film Beyni">
 <!-- Android/Chrome adres çubuğu ve görev yöneticisi rengi -->
-<meta name="theme-color" content="#05050f">
+<meta name="theme-color" content="#0a0a16">
 <meta name="mobile-web-app-capable" content="yes">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- ================= SPLASH ================= -->
 <section id="splash" class="screen splash active">
-  <div class="tech-grid"></div>
   <div class="stars"></div>
   <div class="splash-moon"></div>
   <div class="splash-content">
-    <div class="holo-logo" id="splashLamp">
+    <div class="lamp-wrap" id="splashLamp">
       <div class="smoke-cloud" id="smokeCloud"></div>
-      <div class="holo-logo-inner">
-        <img src="icon-1024.png" alt="Film Beyni logosu">
-      </div>
+      <svg class="lamp-svg" viewBox="0 0 200 120" aria-hidden="true">
+        <ellipse cx="100" cy="108" rx="70" ry="8" class="lamp-shadow"/>
+        <path d="M40 92 Q45 60 90 55 L90 45 Q90 35 100 35 Q110 35 110 45 L110 55 Q150 58 158 82 Q160 92 148 96 L48 96 Q38 96 40 92 Z" class="lamp-body"/>
+        <path d="M148 88 Q175 82 182 68" class="lamp-spout"/>
+        <circle cx="182" cy="66" r="4" class="lamp-tip"/>
+        <rect x="93" y="30" width="14" height="10" rx="2" class="lamp-lid"/>
+        <ellipse cx="100" cy="30" rx="9" ry="4" class="lamp-lid-top"/>
+      </svg>
     </div>
     <h1 class="splash-title">Hoş Geldiniz</h1>
     <p class="splash-sub">→ Efendim ←</p>
@@ -47,16 +50,14 @@
 
 <!-- ================= APP SHELL ================= -->
 <div id="app" class="app">
-  <div class="tech-grid"></div>
 
   <!-- ---- CHAT / HOME VIEW ---- -->
   <section id="view-chat" class="view active">
     <header class="topbar">
       <button class="icon-btn" id="menuBtn" aria-label="Menü">☰</button>
       <div class="topbar-title">
-        <span class="mini-holo"><img src="icon-192.png" alt=""></span>
-        Film Beyni
         <span class="dot-online"></span>
+        Film Beyni
       </div>
       <span class="credit-badge" id="creditBadge" title="Bugün kalan öneri hakkınız">🎫 20</span>
       <button class="icon-btn" id="settingsShortcut" aria-label="Ayarlar">⚙</button>
@@ -204,15 +205,6 @@
   </nav>
 </div>
 
-<!-- ---- GÜNCELLEME BİLDİRİMİ (yeni sürüm hazır olduğunda görünür) ---- -->
-<div class="update-toast" id="updateToast" role="status" aria-live="polite">
-  <span class="update-toast-dot"></span>
-  <span class="update-toast-text">Film Beyni'nin yeni bir sürümü hazır ✨</span>
-  <button type="button" class="update-toast-btn" id="updateToastBtn">Yenile</button>
-  <button type="button" class="update-toast-close" id="updateToastClose" aria-label="Kapat">✕</button>
-</div>
-
 <script src="script.js"></script>
 </body>
 </html>
-
