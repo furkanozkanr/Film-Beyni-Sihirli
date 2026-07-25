@@ -516,5 +516,56 @@
     $("#voiceSupportNote").textContent = "Not: Bu cihazda sesli okuma desteklenmiyor olabilir.";
   }
 
+  /* ================= GÜNCELLEME BİLDİRİMİ (Service Worker) =================
+     Yeni bir sürüm (sw.js içindeki CACHE_VERSION artırıldığında) yayınlanınca
+     kullanıcıya üstte bir "Yenile" bildirimi gösterilir. Kullanıcı yenilemeden
+     mevcut sürümde kalmaya devam edebilir; sayfayı kapatıp tekrar açtığında da
+     güncelleme otomatik uygulanır. */
+  const updateToast = $("#updateToast");
+  const updateToastBtn = $("#updateToastBtn");
+  const updateToastClose = $("#updateToastClose");
+  let waitingWorker = null;
+
+  function showUpdateToast(worker){
+    waitingWorker = worker;
+    updateToast.classList.add("visible");
+  }
+  updateToastClose.addEventListener("click", () => updateToast.classList.remove("visible"));
+  updateToastBtn.addEventListener("click", () => {
+    if (!waitingWorker) { window.location.reload(); return; }
+    waitingWorker.postMessage("SKIP_WAITING");
+  });
+
+  if ("serviceWorker" in navigator){
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").then((reg) => {
+        // Zaten bekleyen (henüz devreye alınmamış) bir sürüm varsa hemen bildir
+        if (reg.waiting) showUpdateToast(reg.waiting);
+
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller){
+              // Yeni sürüm indi ve kuruldu, eski sayfa hâlâ aktif kontrolcüde — bildirim göster
+              showUpdateToast(newWorker);
+            }
+          });
+        });
+
+        // Sekmeler arasında/periyodik olarak yeni sürüm var mı diye kontrol et
+        setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+      }).catch(() => {});
+
+      // Yeni sürüm devreye girince (skipWaiting sonrası) sayfayı bir kez yenile
+      let refreshed = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshed) return;
+        refreshed = true;
+        window.location.reload();
+      });
+    });
+  }
+
 })();
 
