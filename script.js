@@ -1080,6 +1080,14 @@
   localStorage.removeItem("fb_gemini_key");
   localStorage.removeItem("fb_gemini_on");
 
+  /* ---------------- ERİŞİLEBİLİRLİK: azaltılmış hareket ----------------
+     Kullanıcı işletim sisteminden "hareketi azalt" istemişse, açılış
+     videosunu oynatmak yerine durağan posterde (splash-lamp.jpg) bırak. */
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const splashVideo = document.querySelector(".lamp-img");
+    if(splashVideo && splashVideo.tagName === "VIDEO") splashVideo.pause();
+  }
+
   /* ---------------- PWA: service worker kaydı ----------------
      Telefonda "Ana ekrana ekle" dediğinizde gerçek logonun ve
      "yüklenebilir uygulama" davranışının çalışması için gerekli. */
@@ -1090,4 +1098,3 @@
   }
 
 })();
-
