@@ -14,7 +14,9 @@ const ASSETS = [
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
-  "./splash-lamp.jpg"
+  "./splash-lamp.jpg",
+  "./splash-lamp.webm",
+  "./splash-lamp.mp4"
 ];
 
 self.addEventListener("install", (event) => {
