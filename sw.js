@@ -13,7 +13,8 @@ const ASSETS = [
   "./script.js",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./splash-lamp.jpg"
 ];
 
 self.addEventListener("install", (event) => {
