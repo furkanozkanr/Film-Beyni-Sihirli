@@ -12,6 +12,57 @@
 (function(){
   "use strict";
 
+  /* ---------------- ÖZEL İKON KÜTÜPHANESİ ----------------
+     Emoji yerine: tüm ikonlar burada, tek bir yerde, tutarlı ince-çizgi
+     (stroke) stilinde tanımlı. ic(name) çağrısı inline <svg> döndürür,
+     currentColor kullanır (metnin rengini otomatik alır). */
+  const ICON_PATHS = {
+    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    settings: '<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.55 1.55M17.55 17.55l1.55 1.55M3 12h2.2M18.8 12H21M4.9 19.1l1.55-1.55M17.55 6.45l1.55-1.55"/>',
+    ticket: '<path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1.2a1.6 1.6 0 0 0 0 3.2V13.5a1.6 1.6 0 0 0 0 3.2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1.3a1.6 1.6 0 0 0 0-3.2v-2a1.6 1.6 0 0 0 0-3.2V8Z"/><path d="M10 6.5v11" stroke-dasharray="2.2 2.2"/>',
+    heartOutline: '<path d="M12 20s-7-4.4-9.3-8.7C1.1 8 2.7 5 6 5c2 0 3.6 1.2 6 3.6C14.4 6.2 16 5 18 5c3.3 0 4.9 3 3.3 6.3C19 15.6 12 20 12 20Z"/>',
+    heartFilled: '<path d="M12 20s-7-4.4-9.3-8.7C1.1 8 2.7 5 6 5c2 0 3.6 1.2 6 3.6C14.4 6.2 16 5 18 5c3.3 0 4.9 3 3.3 6.3C19 15.6 12 20 12 20Z" fill="currentColor" stroke="none"/>',
+    genie: '<path d="M12 3.4c-2 0-3.6 1.5-3.6 3.4 0 1 .4 1.9 1.1 2.5-2.5.9-4.3 3.2-4.3 6 0 3.6 3 6.5 6.8 6.5s6.8-2.9 6.8-6.5c0-2.8-1.8-5.1-4.3-6 .7-.6 1.1-1.5 1.1-2.5 0-1.9-1.6-3.4-3.6-3.4Z"/><circle cx="10" cy="13.2" r=".9" fill="currentColor" stroke="none"/><circle cx="14" cy="13.2" r=".9" fill="currentColor" stroke="none"/><path d="M9.8 16.3c.6.6 1.4.9 2.2.9s1.6-.3 2.2-.9"/>',
+    send: '<path d="M4 12 20 4l-6.5 16-2.7-6.8L4 12Z" stroke-linejoin="round"/>',
+    back: '<path d="M15 5 8 12l7 7" stroke-linecap="round" stroke-linejoin="round"/>',
+    sparkle: '<path d="M12 3.5 13.4 9 19 10.5 13.4 12 12 17.5 10.6 12 5 10.5 10.6 9 12 3.5Z" fill="currentColor" stroke="none"/>',
+    search: '<circle cx="10.5" cy="10.5" r="6.2"/><path d="m20 20-4.7-4.7" stroke-linecap="round"/>',
+    speaker: '<path d="M4 9.5h3.2L11 6v12l-3.8-3.5H4z" stroke-linejoin="round"/><path d="M14.5 9.3a3.4 3.4 0 0 1 0 5.4M17 7.2a6.8 6.8 0 0 1 0 9.7"/>',
+    star: '<path d="M12 3.8 14.5 9l5.7.8-4.1 4 1 5.6L12 16.6 6.9 19.4l1-5.6-4.1-4L9.5 9 12 3.8Z"/>',
+    clock: '<circle cx="12" cy="12" r="8.3"/><path d="M12 7.5V12l3 2" stroke-linecap="round"/>',
+    freeTag: '<path d="m9 4-5 5v6l9 9 8-8-9-9-3-3Z" stroke-linejoin="round"/><circle cx="8.2" cy="8.2" r="1.3" fill="currentColor" stroke="none"/>',
+    dice: '<rect x="4.5" y="4.5" width="15" height="15" rx="3.5"/><circle cx="8.7" cy="8.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.3" cy="8.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="8.7" cy="15.3" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.3" cy="15.3" r="1.1" fill="currentColor" stroke="none"/>',
+    crystalBall: '<circle cx="12" cy="11" r="6.6"/><ellipse cx="12" cy="20" rx="5.5" ry="1.3"/><path d="M9 9c.3-1.3 1.5-2.2 2.8-2" stroke-linecap="round"/>',
+    lampMini: '<path d="M6.5 15.5c0-2.4 1.6-3.9 3.9-4.2v-1a1.6 1.6 0 0 1 1.6-1.6c.9 0 1.6.7 1.6 1.6v1c2.3.3 3.9 1.8 3.9 4.2 0 1-.7 1.5-1.7 1.5H8.2c-1 0-1.7-.5-1.7-1.5Z"/><path d="M18 15.2c1.6-.3 2.8-1 3.2-2" stroke-linecap="round"/><circle cx="21.3" cy="12.6" r=".7" fill="currentColor" stroke="none"/>',
+    bookOpen: '<path d="M12 6.2c-1.6-1-3.8-1.4-6-1.2v12.6c2.2-.2 4.4.2 6 1.2 1.6-1 3.8-1.4 6-1.2V5c-2.2-.2-4.4.2-6 1.2Z" stroke-linejoin="round"/><path d="M12 6.2v12.6"/>',
+    clapper: '<path d="M4 10.5 5 6.8l13.6 3.6-1 3.7Z" stroke-linejoin="round"/><path d="m8 7.6 2.6 3M12.3 8.7l2.6 3" stroke-linecap="round"/><rect x="4" y="10.5" width="16" height="8" rx="1.3"/>',
+    shieldCheck: '<path d="M12 3.6 19 6.3v5.4c0 4.4-3 7.4-7 8.7-4-1.3-7-4.3-7-8.7V6.3Z" stroke-linejoin="round"/><path d="m9 12 2.1 2.1L15.5 10" stroke-linecap="round" stroke-linejoin="round"/>',
+    compassQ: '<circle cx="12" cy="12" r="8.3"/><path d="M10.3 10.2a1.8 1.8 0 0 1 3.4.8c0 1.2-1.7 1.3-1.7 2.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r=".2" fill="currentColor" stroke="none"/>',
+    filmReel: '<circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="7.3" r="1.3" fill="currentColor" stroke="none"/><circle cx="16.7" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="16.7" r="1.3" fill="currentColor" stroke="none"/><circle cx="7.3" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+    hourglass: '<path d="M6.5 3.6h11M6.5 20.4h11M7.2 3.6c0 4.4 2.2 6.7 4.8 8.4-2.6 1.7-4.8 4-4.8 8.4M16.8 3.6c0 4.4-2.2 6.7-4.8 8.4 2.6 1.7 4.8 4 4.8 8.4" stroke-linecap="round" stroke-linejoin="round"/>',
+    wandSparkle: '<path d="M4 20 15 9" stroke-linecap="round"/><path d="M17 4.5 17.9 6.6 20 7.5 17.9 8.4 17 10.5 16.1 8.4 14 7.5 16.1 6.6 17 4.5Z" fill="currentColor" stroke="none"/>',
+    rocket: '<path d="M12 3.5c2.4 1.4 4 4 4 7.6 0 2-.6 3.8-1.5 5.1h-5c-.9-1.3-1.5-3.1-1.5-5.1 0-3.6 1.6-6.2 4-7.6Z" stroke-linejoin="round"/><circle cx="12" cy="10" r="1.4"/><path d="M9.5 15.7 7 20l2.8-1.4M14.5 15.7 17 20l-2.8-1.4"/>',
+    bolt: '<path d="M13 3 6 13.5h5L10 21l8-11h-5.3L13 3Z" stroke-linejoin="round"/>',
+    masks: '<path d="M4 6c0 5 2.3 8 5.3 8S14 11 14 6c-2 1-6.7 1-10 0Z" stroke-linejoin="round"/><path d="M10 14c0 5 2.3 8 5.3 8S20 19 20 14c-2 1-6.7 1-10 0Z" stroke-linejoin="round"/>',
+    smiley: '<circle cx="12" cy="12" r="8.3"/><path d="M8.5 14c.9 1.3 2 2 3.5 2s2.6-.7 3.5-2" stroke-linecap="round"/><circle cx="9" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r=".9" fill="currentColor" stroke="none"/>',
+    dagger: '<path d="M12 3v9.5" stroke-linecap="round"/><path d="M8 6.5h8M9.5 12.5h5l-2.5 8.5-2.5-8.5Z" stroke-linejoin="round"/>',
+    globe: '<circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c2.3 2.2 3.6 5.2 3.6 8.3s-1.3 6.1-3.6 8.3c-2.3-2.2-3.6-5.2-3.6-8.3S9.7 5.9 12 3.7Z"/>',
+    scroll: '<path d="M6 4.5h9.5a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5H8a2.5 2.5 0 0 1 0-5h10"/><path d="M6 4.5a2.5 2.5 0 0 0 0 5" /><path d="M9 9h6" stroke-linecap="round"/>',
+    dots: '<circle cx="7" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
+    castle: '<path d="M4 21V9l2-2v2h2V7l2 2v2h4V9l2-2v2h2v-2l2 2v12Z" stroke-linejoin="round"/><path d="M9 21v-5a3 3 0 0 1 6 0v5"/>',
+    crown: '<path d="M4 18h16l-1.4-8-3.6 3-3-5-3 5-3.6-3L4 18Z" stroke-linejoin="round"/><path d="M4 20.3h16"/>',
+    sword: '<path d="M6 18 17 7" stroke-linecap="round"/><path d="m14.5 4.5 5 5-2 2-5-5 2-2Z" stroke-linejoin="round"/><path d="m4 20 2.2-1M8 18.5 6.5 20.5"/>',
+    tophat: '<path d="M6 16.5h12M8 16.5V8.7C8 6.1 9.8 4 12 4s4 2.1 4 4.7v7.8"/><path d="M4.5 19.5h15c0-1.7-1.3-3-3-3h-9c-1.7 0-3 1.3-3 3Z" stroke-linejoin="round"/>',
+    train: '<rect x="5.5" y="5" width="13" height="11" rx="2.5"/><path d="M5.5 11.5h13M9 16l-2 3.5M15 16l2 3.5"/><circle cx="9" cy="8.3" r=".8" fill="currentColor" stroke="none"/><circle cx="15" cy="8.3" r=".8" fill="currentColor" stroke="none"/>',
+    tv: '<rect x="3.5" y="6" width="17" height="12" rx="1.8"/><path d="M8 21h8M9 3l3 3 3-3"/>',
+    mobile: '<rect x="7.2" y="3" width="9.6" height="18" rx="2.2"/><path d="M11 18.4h2"/>',
+    brain: '<path d="M9.3 4.2C7 4.2 5.6 6 5.8 8c-1.3.6-2.1 2-2 3.4-1 .7-1.5 2-1.2 3.3.4 1.7 2 2.8 3.7 2.7.4 1.3 1.6 2.4 3.1 2.4V5.5c0-.7-.5-1.3-1.1-1.3Z"/><path d="M14.7 4.2C17 4.2 18.4 6 18.2 8c1.3.6 2.1 2 2 3.4 1 .7 1.5 2 1.2 3.3-.4 1.7-2 2.8-3.7 2.7-.4 1.3-1.6 2.4-3.1 2.4V5.5c0-.7.5-1.3 1.1-1.3Z"/>'
+  };
+  function ic(name, cls){
+    const p = ICON_PATHS[name] || "";
+    return `<svg class="ic ${cls||''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${p}</svg>`;
+  }
+
   /* ---------------- STATE ---------------- */
   const state = {
     jokes: true,
@@ -58,7 +109,7 @@
   function updateCreditBadge(){
     const badge = $("#creditBadge");
     if(badge){
-      badge.textContent = `🎫 ${state.credits.remaining}`;
+      badge.innerHTML = `${ic("ticket")} ${state.credits.remaining}`;
       badge.classList.toggle("low", state.credits.remaining <= 5);
     }
     const statEl = $("#statCredits");
@@ -79,29 +130,29 @@
 
   /* ---------------- DATA: GENRES & ERAS (Efendim'in şablonuna sadık) ---------------- */
   const GENRES = [
-    {id:"fantastik", label:"Fantastik", emoji:"🌌"},
-    {id:"bilimkurgu", label:"Bilim Kurgu", emoji:"🚀"},
-    {id:"aksiyon", label:"Aksiyon", emoji:"💥"},
-    {id:"dram", label:"Dram", emoji:"🎭"},
-    {id:"komedi", label:"Komedi", emoji:"😂"},
-    {id:"gerilim", label:"Gerilim", emoji:"🔪"},
-    {id:"animasyon", label:"Animasyon", emoji:"🎬"},
-    {id:"belgesel", label:"Belgesel", emoji:"🌍"},
-    {id:"romantik", label:"Romantik", emoji:"❤️"},
-    {id:"tarihi", label:"Tarihi", emoji:"📜"},
-    {id:"diger", label:"Diğer", emoji:"🤔"}
+    {id:"fantastik", label:"Fantastik", icon:"wandSparkle"},
+    {id:"bilimkurgu", label:"Bilim Kurgu", icon:"rocket"},
+    {id:"aksiyon", label:"Aksiyon", icon:"bolt"},
+    {id:"dram", label:"Dram", icon:"masks"},
+    {id:"komedi", label:"Komedi", icon:"smiley"},
+    {id:"gerilim", label:"Gerilim", icon:"dagger"},
+    {id:"animasyon", label:"Animasyon", icon:"clapper"},
+    {id:"belgesel", label:"Belgesel", icon:"globe"},
+    {id:"romantik", label:"Romantik", icon:"heartOutline"},
+    {id:"tarihi", label:"Tarihi", icon:"scroll"},
+    {id:"diger", label:"Diğer", icon:"dots"}
   ];
 
   const ERAS = [
-    {id:"e15", label:"15. Yüzyıl", emoji:"🏰"},
-    {id:"e16", label:"16. Yüzyıl", emoji:"👑"},
-    {id:"e17", label:"17. Yüzyıl", emoji:"⚔️"},
-    {id:"e18", label:"18. Yüzyıl", emoji:"🎩"},
-    {id:"e19", label:"19. Yüzyıl", emoji:"🚂"},
-    {id:"e20", label:"20. Yüzyıl", emoji:"📺"},
-    {id:"e21", label:"21. Yüzyıl", emoji:"📱"},
-    {id:"gelecek", label:"Gelecek", emoji:"🔮"},
-    {id:"belirsiz", label:"Belirsiz", emoji:"🕰️"}
+    {id:"e15", label:"15. Yüzyıl", icon:"castle"},
+    {id:"e16", label:"16. Yüzyıl", icon:"crown"},
+    {id:"e17", label:"17. Yüzyıl", icon:"sword"},
+    {id:"e18", label:"18. Yüzyıl", icon:"tophat"},
+    {id:"e19", label:"19. Yüzyıl", icon:"train"},
+    {id:"e20", label:"20. Yüzyıl", icon:"tv"},
+    {id:"e21", label:"21. Yüzyıl", icon:"mobile"},
+    {id:"gelecek", label:"Gelecek", icon:"rocket"},
+    {id:"belirsiz", label:"Belirsiz", icon:"clock"}
   ];
 
   const GENRE_COLORS = {
@@ -526,10 +577,10 @@
 
   /* ---------------- JOKES (kısa, kibar, esprili) ---------------- */
   const JOKES = [
-    "Bir dahi olarak söyleyeyim: senaryo yazmak kolay, iyi senaryo yazmak ise lambanın içinde üç dilek hakkı bulmak kadar zor! 😄",
-    "Film önerisi mi? Sihrimi biraz da olsa Netflix algoritmasına borçlu değilim, merak etmeyin! 🧞✨",
-    "Popcorn'unuzu hazırlayın Efendim, ben burada tam 20 lamba dolusu öneri hazırlıyorum! 🍿",
-    "Bir dilek daha hakkınız olsaydı ne isterdiniz? Ben şimdilik sadece güzel bir film önerisi sunayım. 😉"
+    `Bir dahi olarak söyleyeyim: senaryo yazmak kolay, iyi senaryo yazmak ise lambanın içinde üç dilek hakkı bulmak kadar zor! ${ic("smiley")}`,
+    `Film önerisi mi? Sihrimi biraz da olsa Netflix algoritmasına borçlu değilim, merak etmeyin! ${ic("genie")}${ic("sparkle")}`,
+    `Popcorn'unuzu hazırlayın Efendim, ben burada tam 20 lamba dolusu öneri hazırlıyorum! ${ic("sparkle")}`,
+    `Bir dilek daha hakkınız olsaydı ne isterdiniz? Ben şimdilik sadece güzel bir film önerisi sunayım. ${ic("smiley")}`
   ];
 
   /* ---------------- DOM HELPERS ---------------- */
@@ -588,7 +639,9 @@
   function addMsg(html, from, withChips){
     const wrap = document.createElement("div");
     wrap.className = "msg " + from;
-    wrap.innerHTML = html + `<span class="time">${timeNow()}</span>`;
+    const showAvatar = from === "genie" && !html.includes("conjuring");
+    const finalHtml = showAvatar ? `${ic("genie","genie-avatar")} ${html}` : html;
+    wrap.innerHTML = finalHtml + `<span class="time">${timeNow()}</span>`;
     $("#chatScroll").appendChild(wrap);
     if(withChips && withChips.length){
       const row = document.createElement("div");
@@ -596,7 +649,7 @@
       withChips.forEach(c => {
         const b = document.createElement("button");
         b.className = "chip";
-        b.textContent = c.label;
+        b.innerHTML = c.label;
         b.onclick = c.onClick;
         row.appendChild(b);
       });
@@ -612,7 +665,7 @@
   function showTyping(cb, delay){
     const t = document.createElement("div");
     t.className = "msg genie typing-dots";
-    t.innerHTML = "<span></span><span></span><span></span>";
+    t.innerHTML = `${ic("genie","genie-avatar")} <span></span><span></span><span></span>`;
     $("#chatScroll").appendChild(t);
     $("#chatScroll").scrollTop = $("#chatScroll").scrollHeight;
     setTimeout(() => { t.remove(); cb(); }, delay || 900);
@@ -637,7 +690,7 @@
     div.style.background = `linear-gradient(155deg, ${g[0]}, ${g[1]})`;
     if(w) div.style.width = w;
     if(h) div.style.height = h;
-    div.textContent = "🎬";
+    div.innerHTML = ic("clapper", "ic-lg");
     return div;
   }
 
@@ -695,9 +748,9 @@
       meta.className = "result-info";
       meta.innerHTML = `<h4>${m.t} <span style="opacity:.6;font-weight:400">(${m.y})</span></h4>
         <div class="result-meta">
-          <span>⭐ ${m.imdb.toFixed(1)}</span>
-          <span>${m.dk} dk</span>
-          <span class="tag free">Ücretsiz seçenek ara</span>
+          <span>${ic("star")} ${m.imdb.toFixed(1)}</span>
+          <span>${ic("clock")} ${m.dk} dk</span>
+          <span class="tag free">${ic("search")} Ücretsiz seçenek ara</span>
         </div>`;
       card.appendChild(posterEl(m));
       card.appendChild(meta);
@@ -719,27 +772,27 @@
       </div>
       <div class="detail-content">
         <div class="detail-tags">
-          <span class="tag res">⭐ ${m.imdb.toFixed(1)} IMDb (yaklaşık)</span>
-          <span class="tag free">${m.dk} dk</span>
+          <span class="tag res">${ic("star")} ${m.imdb.toFixed(1)} IMDb (yaklaşık)</span>
+          <span class="tag free">${ic("clock")} ${m.dk} dk</span>
           <span class="tag res">${m.y}</span>
         </div>
         <div class="detail-section">
-          <h4>📖 Konusu</h4>
+          <h4>${ic("bookOpen")} Konusu</h4>
           <p>${m.syn}</p>
         </div>
         <div class="detail-section">
-          <h4>🎬 Tür &amp; Yönetmen</h4>
+          <h4>${ic("clapper")} Tür &amp; Yönetmen</h4>
           <p>${genreLabels} · ${m.dir}</p>
         </div>
         <div class="detail-section">
-          <h4>💪 Güçlü Yönleri</h4>
+          <h4>${ic("shieldCheck")} Güçlü Yönleri</h4>
           <ul>${m.guclu.map(x=>`<li>${x}</li>`).join("")}</ul>
         </div>
         <div class="detail-section">
-          <h4>🧐 Farklı Yorumlanabilecek Noktalar</h4>
+          <h4>${ic("compassQ")} Farklı Yorumlanabilecek Noktalar</h4>
           <ul>${m.farkli.map(x=>`<li>${x}</li>`).join("")}</ul>
         </div>
-        <button class="watch-btn" id="watchBtn">🔎 Ücretsiz &amp; Yasal İzleme Seçeneklerini Google'da Bul</button>
+        <button class="watch-btn" id="watchBtn">${ic("search")} Ücretsiz &amp; Yasal İzleme Seçeneklerini Google'da Bul</button>
         <p class="watch-note">Film Beyni canlı internet erişimine sahip olmadığı için sabit bir link vermek yerine, güncel ve doğrulanmış sonuçlar için sizi doğrudan bir Google aramasına yönlendirir (Tubi, Pluto TV, Internet Archive gibi ücretsiz-yasal platformları önceliklendiren bir sorgu ile).</p>
       </div>`;
     $("#watchBtn").onclick = () => {
@@ -753,7 +806,7 @@
 
   function updateFavBtn(){
     const on = currentDetail && state.favorites.some(f => f.t === currentDetail.t);
-    $("#detailFavBtn").textContent = on ? "♥" : "♡";
+    $("#detailFavBtn").innerHTML = ic(on ? "heartFilled" : "heartOutline");
     $("#detailFavBtn").style.color = on ? "#d6437f" : "";
   }
 
@@ -797,10 +850,10 @@
     GENRES.forEach(g => {
       const card = document.createElement("div");
       card.className = "card-pick";
-      card.innerHTML = `<span class="emoji">${g.emoji}</span><span class="label">${g.label}</span>`;
+      card.innerHTML = `<span class="emoji">${ic(g.icon, "ic-lg")}</span><span class="label">${g.label}</span>`;
       card.onclick = () => {
         state.pendingGenre = g.id;
-        addMsg(`${g.emoji} <strong>${g.label}</strong> türünü seçtiniz.`, "user");
+        addMsg(`${ic(g.icon)} <strong>${g.label}</strong> türünü seçtiniz.`, "user");
         showView("view-eras");
       };
       grid.appendChild(card);
@@ -813,7 +866,7 @@
     ERAS.forEach(e => {
       const row = document.createElement("div");
       row.className = "era-row";
-      row.innerHTML = `<span class="emoji">${e.emoji}</span><span>${e.label}</span>`;
+      row.innerHTML = `<span class="emoji">${ic(e.icon, "ic-lg")}</span><span>${e.label}</span>`;
       row.onclick = () => {
         showView("view-chat");
         runRecommendationFlow(state.pendingGenre, e.id, GENRES.find(x=>x.id===state.pendingGenre)?.label, e.label);
@@ -824,27 +877,27 @@
 
   /* ---------------- CONJURING (yükleniyor) ANIMASYONU ---------------- */
   function conjure(cb){
-    const holder = addMsg(`<div class="conjuring"><div class="mini-lamp">🪔</div><div class="progress-bar"><div></div></div>Filmleri sihirle hazırlıyorum…</div>`, "genie");
+    const holder = addMsg(`<div class="conjuring"><div class="mini-lamp">${ic("lampMini","ic-lg")}</div><div class="progress-bar"><div></div></div>Filmleri sihirle hazırlıyorum…</div>`, "genie");
     setTimeout(() => { holder.remove(); cb(); }, state.animQuality === "low" ? 300 : 1200);
   }
 
   const INTRO_LINES = [
-    (l)=>`Anlaşıldı Efendim! <strong>${l}</strong> için sihrimi hazırlıyorum. 🧞‍♂️`,
-    (l)=>`<strong>${l}</strong> mi? Nefis bir seçim, hemen bakıyorum. ✨`,
-    (l)=>`Lambamı ovuyorum… <strong>${l}</strong> için 20 film geliyor! 🪔`,
-    (l)=>`Harika bir zevk Efendim! <strong>${l}</strong> üzerine düşünüyorum. 🌟`
+    (l)=>`Anlaşıldı Efendim! <strong>${l}</strong> için sihrimi hazırlıyorum. ${ic("genie")}`,
+    (l)=>`<strong>${l}</strong> mi? Nefis bir seçim, hemen bakıyorum. ${ic("sparkle")}`,
+    (l)=>`Lambamı ovuyorum… <strong>${l}</strong> için 20 film geliyor! ${ic("lampMini")}`,
+    (l)=>`Harika bir zevk Efendim! <strong>${l}</strong> üzerine düşünüyorum. ${ic("star")}`
   ];
   const RESULT_LINES = [
-    ()=>`İşte 20 özenle seçilmiş film! 📽️`,
-    ()=>`Buyurun, tam 20 film hazır! 🎬`,
-    ()=>`20 öneri kapıda Efendim! ✨`,
-    ()=>`Sihir tamamlandı, 20 film önünüzde! 🔮`
+    ()=>`İşte 20 özenle seçilmiş film! ${ic("clapper")}`,
+    ()=>`Buyurun, tam 20 film hazır! ${ic("filmReel")}`,
+    ()=>`20 öneri kapıda Efendim! ${ic("sparkle")}`,
+    ()=>`Sihir tamamlandı, 20 film önünüzde! ${ic("crystalBall")}`
   ];
 
   function runRecommendationFlow(genreId, eraId, genreLabel, eraLabel){
     const label = [genreLabel, eraLabel].filter(Boolean).join(" · ") || "Karma";
     if(!hasCredit()){
-      addMsg(`Bugünkü 20 hakkınızı kullandınız Efendim! Yarın tekrar dolu bir lamba ile buradayım. ✨`, "genie");
+      addMsg(`Bugünkü 20 hakkınızı kullandınız Efendim! Yarın tekrar dolu bir lamba ile buradayım. ${ic("sparkle")}`, "genie");
       return;
     }
     spendCredit();
@@ -908,10 +961,10 @@
           eraGuess ? ERAS.find(e=>e.id===eraGuess).label : null
         );
       } else {
-        addMsg(`Bir tür ya da dönem söylerseniz hemen 20 film hazırlarım Efendim. 😊`, "genie", [
-          {label:"🎬 Film Türleri", onClick:() => { showView("view-genres"); }},
-          {label:"⏳ Dönem Seçimi", onClick:() => { showView("view-eras"); }},
-          {label:"✨ Rastgele Öner", onClick:() => randomFlow()}
+        addMsg(`Bir tür ya da dönem söylerseniz hemen 20 film hazırlarım Efendim. ${ic("smiley")}`, "genie", [
+          {label:`${ic("filmReel")} Film Türleri`, onClick:() => { showView("view-genres"); }},
+          {label:`${ic("hourglass")} Dönem Seçimi`, onClick:() => { showView("view-eras"); }},
+          {label:`${ic("wandSparkle")} Rastgele Öner`, onClick:() => randomFlow()}
         ]);
       }
     }, 600);
@@ -919,14 +972,14 @@
 
   function randomFlow(){
     if(!hasCredit()){
-      addMsg(`Bugünkü 20 hakkınızı kullandınız Efendim! Yarın tekrar dolu bir lamba ile buradayım. ✨`, "genie");
+      addMsg(`Bugünkü 20 hakkınızı kullandınız Efendim! Yarın tekrar dolu bir lamba ile buradayım. ${ic("sparkle")}`, "genie");
       return;
     }
     spendCredit();
-    addMsg("Rastgele sihir yapıyorum! 🔮", "genie");
+    addMsg(`Rastgele sihir yapıyorum! ${ic("crystalBall")}`, "genie");
     conjure(() => {
       const list = recommend(null, null, 20);
-      addMsg(`İşte fal taşı gibi açık, karma 20 film! 🎲${maybeJoke()}`, "genie");
+      addMsg(`İşte fal taşı gibi açık, karma 20 film! ${ic("dice")}${maybeJoke()}`, "genie");
       renderResults("Rastgele Öneriler", list);
     });
   }
@@ -934,9 +987,9 @@
   /* ---------------- INIT CHAT ---------------- */
   function initialGreeting(){
     addMsg(
-      `Merhaba Efendim! 🧞‍♂️🧞‍♀️ Ben sizin özel oluşturduğunuz bir 🎬 Film Beyni'yim! 🧠<br>` +
+      `Merhaba Efendim! ${ic("genie")} Ben sizin özel oluşturduğunuz bir ${ic("filmReel")} Film Beyni'yim! ${ic("brain")}<br>` +
       `Size nasıl yardımcı olabilirim, nasılsınız?<br><br>` +
-      `Bana bir tür, dönem söyleyin ya da aşağıdaki kısayolları kullanın — hemen yüksek kaliteli, ilham verici 20 film önerisi hazırlayayım! ✨`,
+      `Bana bir tür, dönem söyleyin ya da aşağıdaki kısayolları kullanın — hemen yüksek kaliteli, ilham verici 20 film önerisi hazırlayayım! ${ic("sparkle")}`,
       "genie"
     );
   }
@@ -1071,6 +1124,9 @@
   setTimeout(goToApp, 2600);
 
   /* ---------------- BOOT ---------------- */
+  document.querySelectorAll(".icon-slot[data-icon]").forEach(el => {
+    el.innerHTML = ic(el.dataset.icon);
+  });
   buildGenreGrid();
   buildEraList();
   renderStats();
@@ -1098,3 +1154,4 @@
   }
 
 })();
+
