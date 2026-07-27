@@ -47,9 +47,9 @@
       <span class="spark s6"></span>
     </div>
     <h1 class="splash-title">Hoş Geldiniz</h1>
-    <p class="splash-sub">→ Efendim ←</p>
+    <p class="splash-sub"><span class="icon-slot" data-icon="sparkle"></span> Efendim <span class="icon-slot" data-icon="sparkle"></span></p>
     <h2 class="brand">Film Beyni</h2>
-    <p class="brand-tag">✦ Yapay Zeka ile Güçlendirilmiş ✦</p>
+    <p class="brand-tag"><span class="icon-slot" data-icon="sparkle"></span> Yapay Zeka ile Güçlendirilmiş <span class="icon-slot" data-icon="sparkle"></span></p>
   </div>
 </section>
 
@@ -59,21 +59,21 @@
   <!-- ---- CHAT / HOME VIEW ---- -->
   <section id="view-chat" class="view active">
     <header class="topbar">
-      <button class="icon-btn" id="menuBtn" aria-label="Menü">☰</button>
+      <button class="icon-btn" id="menuBtn" aria-label="Menü"><span class="icon-slot" data-icon="menu"></span></button>
       <div class="topbar-title">
         <span class="dot-online"></span>
         Film Beyni
       </div>
-      <span class="credit-badge" id="creditBadge" title="Bugün kalan öneri hakkınız">🎫 20</span>
-      <button class="icon-btn" id="settingsShortcut" aria-label="Ayarlar">⚙</button>
+      <span class="credit-badge" id="creditBadge" title="Bugün kalan öneri hakkınız"><span class="icon-slot" data-icon="ticket"></span> 20</span>
+      <button class="icon-btn" id="settingsShortcut" aria-label="Ayarlar"><span class="icon-slot" data-icon="settings"></span></button>
     </header>
 
     <div class="chat-scroll" id="chatScroll"></div>
 
     <div class="quick-actions" id="quickActions">
-      <button class="quick-chip" data-action="genres">🎬 Film Türleri</button>
-      <button class="quick-chip" data-action="eras">⏳ Dönem Seçimi</button>
-      <button class="quick-chip" data-action="random">✨ Rastgele Öner</button>
+      <button class="quick-chip" data-action="genres"><span class="icon-slot" data-icon="filmReel"></span> Film Türleri</button>
+      <button class="quick-chip" data-action="eras"><span class="icon-slot" data-icon="hourglass"></span> Dönem Seçimi</button>
+      <button class="quick-chip" data-action="random"><span class="icon-slot" data-icon="wandSparkle"></span> Rastgele Öner</button>
     </div>
 
     <form class="composer" id="composerForm">
@@ -85,14 +85,14 @@
           <path d="M12 16.8v3.1M9.3 19.9h5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
-      <button type="submit" class="send-btn" aria-label="Gönder">➤</button>
+      <button type="submit" class="send-btn" aria-label="Gönder"><span class="icon-slot" data-icon="send"></span></button>
     </form>
   </section>
 
   <!-- ---- GENRE PICKER VIEW ---- -->
   <section id="view-genres" class="view">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="view-chat">←</button>
+      <button class="icon-btn back-btn" data-back="view-chat"><span class="icon-slot" data-icon="back"></span></button>
       <h2>Film Türleri</h2>
     </header>
     <div class="grid grid-genres" id="genreGrid"></div>
@@ -101,7 +101,7 @@
   <!-- ---- ERA PICKER VIEW ---- -->
   <section id="view-eras" class="view">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="view-chat">←</button>
+      <button class="icon-btn back-btn" data-back="view-chat"><span class="icon-slot" data-icon="back"></span></button>
       <h2>Dönem Seçimi</h2>
     </header>
     <div class="list list-eras" id="eraList"></div>
@@ -110,7 +110,7 @@
   <!-- ---- RESULTS VIEW ---- -->
   <section id="view-results" class="view">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="view-chat">←</button>
+      <button class="icon-btn back-btn" data-back="view-chat"><span class="icon-slot" data-icon="back"></span></button>
       <h2 id="resultsTitle">Öneriler</h2>
     </header>
     <div class="results-list" id="resultsList"></div>
@@ -119,8 +119,8 @@
   <!-- ---- DETAIL VIEW ---- -->
   <section id="view-detail" class="view">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="view-results">←</button>
-      <button class="icon-btn fav-toggle" id="detailFavBtn">♡</button>
+      <button class="icon-btn back-btn" data-back="view-results"><span class="icon-slot" data-icon="back"></span></button>
+      <button class="icon-btn fav-toggle" id="detailFavBtn"></button>
     </header>
     <div class="detail-body" id="detailBody"></div>
   </section>
@@ -131,14 +131,14 @@
       <h2>Favori Filmlerim</h2>
     </header>
     <div class="fav-grid" id="favGrid"></div>
-    <p class="empty-note" id="favEmpty">Henüz favori filminiz yok. Bir film bulun ve ♡ ile kaydedin. 🧞</p>
+    <p class="empty-note" id="favEmpty">Henüz favori filminiz yok. Bir film bulun ve <span class="icon-slot" data-icon="heartOutline"></span> ile kaydedin. <span class="icon-slot" data-icon="genie"></span></p>
   </section>
 
   <!-- ---- PROFILE VIEW ---- -->
   <section id="view-profile" class="view">
     <header class="subbar"><h2>Profilim</h2></header>
     <div class="profile-body">
-      <div class="profile-avatar">🧞</div>
+      <div class="profile-avatar"><span class="icon-slot ic-xl" data-icon="genie"></span></div>
       <h3 class="profile-name">Efendim</h3>
       <p class="profile-tag">Film Beyni ile harika vakitler!</p>
       <div class="profile-stats">
@@ -147,14 +147,14 @@
         <div class="stat"><span id="statFav">0</span><small>Favori Film</small></div>
         <div class="stat"><span id="statCredits">20</span><small>Bugünkü Hak</small></div>
       </div>
-      <button class="ghost-btn" id="gotoSettings">⚙ Ayarlar</button>
+      <button class="ghost-btn" id="gotoSettings"><span class="icon-slot" data-icon="settings"></span> Ayarlar</button>
     </div>
   </section>
 
   <!-- ---- SETTINGS VIEW ---- -->
   <section id="view-settings" class="view">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="view-chat">←</button>
+      <button class="icon-btn back-btn" data-back="view-chat"><span class="icon-slot" data-icon="back"></span></button>
       <h2>Ayarlar</h2>
     </header>
     <div class="settings-body">
@@ -163,7 +163,7 @@
         <div class="toggle on" id="toggleVoice"><div class="knob"></div></div>
       </div>
       <p class="setting-note" id="voiceSupportNote"></p>
-      <button class="ghost-btn" id="testVoiceBtn" style="margin-bottom:16px;">🔊 Sesi Test Et</button>
+      <button class="ghost-btn" id="testVoiceBtn" style="margin-bottom:16px;"><span class="icon-slot" data-icon="speaker"></span> Sesi Test Et</button>
       <div class="setting-row">
         <label>Esprili Yanıtlar</label>
         <div class="toggle on" id="toggleJokes"><div class="knob"></div></div>
@@ -181,9 +181,10 @@
           <button class="active" data-val="ultra">Ultra</button>
         </div>
       </div>
-      <p class="settings-footer">Sihir her zaman sizinle olsun! ✦</p>
+      <p class="settings-footer">Sihir her zaman sizinle olsun! <span class="icon-slot" data-icon="sparkle"></span></p>
     </div>
   </section>
+
 
   <!-- ---- BOTTOM NAV ---- -->
   <nav class="bottom-nav" id="bottomNav">
